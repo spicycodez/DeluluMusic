@@ -754,7 +754,7 @@ async def slider_queries(client, CallbackQuery, _):
 r_markup(
             _, vidid, CallbackQuery.from_user.id, query, query_type, cplay, fplay
         )
-        med = InputMediaPhoto(
+med = InputMediaPhoto(
             media=thumbnail,
             caption=_["play_10"].format(
                 title.title(),
