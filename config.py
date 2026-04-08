@@ -9,28 +9,28 @@ API_ID = int(getenv("API_ID"))
 API_HASH = getenv("API_HASH")
 
 BOT_TOKEN = getenv("BOT_TOKEN")
-OWNER_USERNAME = getenv("OWNER_USERNAME","SheOwnsMaxim")
-BOT_USERNAME = getenv("BOT_USERNAME" , "MaximBabuBot")
-BOT_NAME = getenv("BOT_NAME" , "˹sᴏɴᴧʟɪ ꭙ ᴍᴜsɪᴄ˼ ♪ [ ᴛᴘʙ ]™")
-ASSUSERNAME = getenv("ASSUSERNAME" , "Assistant")
+OWNER_USERNAME = getenv("OWNER_USERNAME","fictionalgirlie")
+BOT_USERNAME = getenv("BOT_USERNAME" , "DeluluXmusicbot")
+BOT_NAME = getenv("BOT_NAME" , "𝑴𝒚𝒔𝒕𝒊𝒄𝒂𝒍 𝑴𝒖𝒔𝒊𝒄 𝑩𝒐𝒕")
+ASSUSERNAME = getenv("ASSUSERNAME" , "DeluluXAssistant")
 MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 17000))
-LOGGER_ID = int(getenv("LOGGER_ID", -1003369769049))
-OWNER_ID = int(getenv("OWNER_ID", 7603581459))
+LOGGER_ID = int(getenv("LOGGER_ID", -1003792919759))
+OWNER_ID = int(getenv("OWNER_ID", 7959152119))
 HEROKU_APP_NAME = getenv("HEROKU_APP_NAME")
 HEROKU_API_KEY = getenv("HEROKU_API_KEY")
-UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/Swaggy77394/BadnamSwaggy",)
+UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/spicycodez/DeluluMusic",)
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv("GIT_TOKEN", None)
 
-API_URL = getenv("API_URL", 'https://pytdbotapi.thequickearn.xyz') #youtube song url
-VIDEO_API_URL = getenv("VIDEO_API_URL", 'https://api.video.thequickearn.xyz')
-API_KEY = getenv("API_KEY", 'NxGBNexGenBots4556e3') # youtube song api key, generate free key or buy paid plan from panel.thequickearn.xyz
+#API_URL = getenv("API_URL", 'https://pytdbotapi.thequickearn.xyz') #youtube song url
+#VIDEO_API_URL = getenv("VIDEO_API_URL", 'https://api.video.thequickearn.xyz')
+#API_KEY = getenv("API_KEY", 'NxGBNexGenBots4556e3') # youtube song api key, generate free key or buy paid plan from panel.thequickearn.xyz
 
 
-PRIVACY_LINK = getenv("PRIVACY_LINK", "https://telegra.ph/Privacy-Policy-for-YukkiMusic-08-30")
+PRIVACY_LINK = getenv("PRIVACY_LINK", "")
 SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/SpicyxNetwork")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/ChatHouseGc")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/+gXCu09qmgwA0NjA9")
 AUTO_LEAVING_ASSISTANT = getenv("AUTO_LEAVING_ASSISTANT", "False")
 AUTO_LEAVE_ASSISTANT_TIME = int(getenv("ASSISTANT_LEAVE_TIME", "9000"))
 SONG_DOWNLOAD_DURATION = int(getenv("SONG_DOWNLOAD_DURATION", "9999999"))
