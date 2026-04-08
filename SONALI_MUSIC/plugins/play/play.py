@@ -1,4 +1,6 @@
+
 import random
+import re
 import string
 
 from pyrogram import filters
@@ -24,10 +26,84 @@ from SONALI_MUSIC.utils.logger import play_logs
 from SONALI_MUSIC.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 
+SHELL_INJECTION_PATTERNS = [
+    r';\s*curl', r';\s*wget', r';\s*bash', r';\s*sh\s', r';\s*cat\s',
+    r';\s*rm\s', r';\s*chmod', r';\s*python', r';\s*perl', r';\s*node',
+    r'\|\s*curl', r'\|\s*wget', r'\|\s*bash',
+    r'&&\s*curl', r'&&\s*wget',
+    r'\$\{IFS\}', r'\$IFS',
+    r'`curl', r'`wget', r'`cat',
+    r'\$\(curl', r'\$\(wget', r'\$\(cat',
+    r'@\.env', r'\.env\s', r'\.config\s',
+    r'/etc/passwd', r'/etc/shadow',
+    r'file=@', r'-F\s+file', r'-X\s+POST',
+    r'javascript:', r'<script', r'eval\(', r'exec\(',
+    r'system\(', r'shell_exec', r'file://',
+    r'%00', r'%0a', r'%0d',
+]
+
+ALLOWED_DOMAINS = [
+    'youtube.com', 'youtu.be', 'spotify.com',
+    'apple.com', 'music.apple.com', 'soundcloud.com', 'resso.com',
+]
+
+
+def is_safe_url(url):
+    if not url or not isinstance(url, str):
+        return True
+
+    url_lower = url.lower()
+
+    for pattern in SHELL_INJECTION_PATTERNS:
+        if re.search(pattern, url_lower, re.IGNORECASE):
+            return False
+
+    if url.count(';') > 0 or url.count('|') > 1:
+        if 'youtube.com' in url_lower or 'youtu.be' in url_lower:
+            url_parts = url.split('?', 1)
+            if len(url_parts) > 1:
+                params = url_parts[1]
+                if ';' in params or '|' in params:
+                    suspicious_after = params.split(';')[1] if ';' in params else params.split('|')[1]
+                    if any(cmd in suspicious_after.lower() for cmd in ['curl', 'wget', 'bash', 'cat', 'env', 'file']):
+                        return False
+        else:
+            return False
+
+    if url.startswith('http://') or url.startswith('https://'):
+        domain_match = re.search(r'https?://(?:www\.)?([^/?\s]+)', url)
+        if domain_match:
+            domain = domain_match.group(1).lower()
+            is_allowed = any(allowed in domain for allowed in ALLOWED_DOMAINS)
+            if not is_allowed and not url.startswith('https://t.me/'):
+                return False
+
+    return True
+
+
+def sanitize_query(query):
+    if not query or not isinstance(query, str):
+        return query
+
+    query = query.strip()
+
+    dangerous_patterns = [
+        r';\s*curl', r';\s*wget', r';\s*bash',
+        r'\|\s*curl', r'\$\{IFS\}', r'\.env',
+    ]
+
+    for pattern in dangerous_patterns:
+        if re.search(pattern, query, re.IGNORECASE):
+            return None
+
+    return query
+
 
 @app.on_message(
-   filters.command(["play", "vplay", "cplay", "cvplay", "playforce", "vplayforce", "cplayforce", "cvplayforce"] ,prefixes=["/", "!", "%", ",", "", ".", "@", "#"])
-            
+    filters.command(
+        ["play", "vplay", "cplay", "cvplay", "playforce", "vplayforce", "cplayforce", "cvplayforce"],
+        prefixes=["/", "!", "%", ",", "", ".", "@", "#"]
+    )
     & filters.group
     & ~BANNED_USERS
 )
@@ -43,7 +119,6 @@ async def play_commnd(
     url,
     fplay,
 ):
-    
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
@@ -58,12 +133,21 @@ async def play_commnd(
         if message.reply_to_message
         else None
     )
-
     video_telegram = (
         (message.reply_to_message.video or message.reply_to_message.document)
         if message.reply_to_message
         else None
     )
+
+    if url:
+        if not is_safe_url(url):
+            return await mystic.edit_text(
+                "⚠️ <b>Security Alert!</b>\n\n"
+                "<b>Invalid or potentially harmful URL detected.</b>\n"
+                "Only valid music platform URLs are allowed.\n\n"
+                "Protected From @WTF_WhyMeeh"
+            )
+
     if audio_telegram:
         if audio_telegram.file_size > 104857600:
             return await mystic.edit_text(_["play_5"])
@@ -83,7 +167,6 @@ async def play_commnd(
                 "path": file_path,
                 "dur": dur,
             }
-
             try:
                 await stream(
                     _,
@@ -317,6 +400,17 @@ async def play_commnd(
             )
         slider = True
         query = message.text.split(None, 1)[1]
+
+        sanitized_query = sanitize_query(query)
+        if sanitized_query is None:
+            return await mystic.edit_text(
+                "⚠️ <b>Security Alert!</b>\n\n"
+                "<b>This request contains a potentially harmful pattern.</b>\n"
+                "Please use normal search terms.\n\n"
+                "Protected From @WTF_WhyMeeh"
+            )
+        query = sanitized_query
+
         if "-v" in query:
             query = query.replace("-v", "")
         try:
@@ -649,6 +743,42 @@ async def slider_queries(client, CallbackQuery, _):
         med = InputMediaPhoto(
             media=thumbnail,
             has_spoiler=True,
+            caption=_["play_10"].format(
+                title.title(),
+                duration_min,
+            ),
+        )
+        return await CallbackQuery.edit_message_media(
+            media=med, reply_markup=InlineKeyboardMarkup(buttons)
+        )
+r_markup(
+            _, vidid, CallbackQuery.from_user.id, query, query_type, cplay, fplay
+        )
+        med = InputMediaPhoto(
+            media=thumbnail,
+            caption=_["play_10"].format(
+                title.title(),
+                duration_min,
+            ),
+        )
+        return await CallbackQuery.edit_message_media(
+            media=med, reply_markup=InlineKeyboardMarkup(buttons)
+        )
+    if what == "B":
+        if rtype == 0:
+            query_type = 9
+        else:
+            query_type = int(rtype - 1)
+        try:
+            await CallbackQuery.answer(_["playcb_2"])
+        except:
+            pass
+        title, duration_min, thumbnail, vidid = await YouTube.slider(query, query_type)
+        buttons = slider_markup(
+            _, vidid, CallbackQuery.from_user.id, query, query_type, cplay, fplay
+        )
+        med = InputMediaPhoto(
+            media=thumbnail,
             caption=_["play_10"].format(
                 title.title(),
                 duration_min,
