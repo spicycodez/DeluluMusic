@@ -3,12 +3,10 @@ import re
 import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
-from py_yt import VideosSearch
+from youtubesearchpython.__future__ import VideosSearch
 from config import YOUTUBE_IMG_URL
+from Tune.core.dir import CACHE_DIR 
 
-# Constants
-CACHE_DIR = "cache"
-os.makedirs(CACHE_DIR, exist_ok=True)
 
 PANEL_W, PANEL_H = 763, 545
 PANEL_X = (1280 - PANEL_W) // 2
@@ -35,6 +33,7 @@ ICONS_Y = BAR_Y + 48
 
 MAX_TITLE_WIDTH = 580
 
+
 def trim_to_width(text: str, font: ImageFont.FreeTypeFont, max_w: int) -> str:
     ellipsis = "…"
     if font.getlength(text) <= max_w:
@@ -44,7 +43,8 @@ def trim_to_width(text: str, font: ImageFont.FreeTypeFont, max_w: int) -> str:
             return text[:i] + ellipsis
     return ellipsis
 
-async def get_thumb(videoid: str):
+
+async def get_thumb(videoid: str) -> str:
     cache_path = os.path.join(CACHE_DIR, f"{videoid}_v4.png")
     if os.path.exists(cache_path):
         return cache_path
@@ -92,9 +92,17 @@ async def get_thumb(videoid: str):
 
     # Draw details
     draw = ImageDraw.Draw(bg)
+
+    # Font fix (absolute path)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
     try:
-        title_font = ImageFont.truetype("SONALI_MUSIC/assets/font2.ttf", 32)
-        regular_font = ImageFont.truetype("SONALI_MUSIC/assets/font.ttf", 18)
+        title_font = ImageFont.truetype(
+            os.path.join(BASE_DIR, "..", "assets", "thumb", "font2.ttf"), 32
+        )
+        regular_font = ImageFont.truetype(
+            os.path.join(BASE_DIR, "..", "assets", "thumb", "font.ttf"), 18
+        )
     except OSError:
         title_font = regular_font = ImageFont.load_default()
 
@@ -103,27 +111,83 @@ async def get_thumb(videoid: str):
     ImageDraw.Draw(tmask).rounded_rectangle((0, 0, THUMB_W, THUMB_H), 20, fill=255)
     bg.paste(thumb, (THUMB_X, THUMB_Y), tmask)
 
-    draw.text((TITLE_X, TITLE_Y), trim_to_width(title, title_font, MAX_TITLE_WIDTH), fill="black", font=title_font)
-    draw.text((META_X, META_Y), f"YouTube | {views}", fill="black", font=regular_font)
+    draw.text(
+        (TITLE_X, TITLE_Y),
+        trim_to_width(title, title_font, MAX_TITLE_WIDTH),
+        fill="black",
+        font=title_font,
+    )
+
+    draw.text(
+        (META_X, META_Y),
+        f"YouTube | {views}",
+        fill="black",
+        font=regular_font,
+    )
 
     # Progress bar
-    draw.line([(BAR_X, BAR_Y), (BAR_X + BAR_RED_LEN, BAR_Y)], fill="red", width=6)
-    draw.line([(BAR_X + BAR_RED_LEN, BAR_Y), (BAR_X + BAR_TOTAL_LEN, BAR_Y)], fill="gray", width=5)
-    draw.ellipse([(BAR_X + BAR_RED_LEN - 7, BAR_Y - 7), (BAR_X + BAR_RED_LEN + 7, BAR_Y + 7)], fill="red")
+    draw.line(
+        [(BAR_X, BAR_Y), (BAR_X + BAR_RED_LEN, BAR_Y)],
+        fill="red",
+        width=6,
+    )
 
-    draw.text((BAR_X, BAR_Y + 15), "00:00", fill="black", font=regular_font)
+    draw.line(
+        [(BAR_X + BAR_RED_LEN, BAR_Y), (BAR_X + BAR_TOTAL_LEN, BAR_Y)],
+        fill="gray",
+        width=5,
+    )
+
+    draw.ellipse(
+        [
+            (BAR_X + BAR_RED_LEN - 7, BAR_Y - 7),
+            (BAR_X + BAR_RED_LEN + 7, BAR_Y + 7),
+        ],
+        fill="red",
+    )
+
+    draw.text(
+        (BAR_X, BAR_Y + 15),
+        "00:00",
+        fill="black",
+        font=regular_font,
+    )
+
     end_text = "Live" if is_live else duration_text
-    draw.text((BAR_X + BAR_TOTAL_LEN - (90 if is_live else 60), BAR_Y + 15), end_text, fill="red" if is_live else "black", font=regular_font)
 
-    # Icons
-    icons_path = "SONALI_MUSIC/assets/play_icons.png"
+    draw.text(
+        (BAR_X + BAR_TOTAL_LEN - (90 if is_live else 60), BAR_Y + 15),
+        end_text,
+        fill="red" if is_live else "black",
+        font=regular_font,
+    )
+
+    # ✅ ICON FIX (absolute path)
+    icons_path = os.path.join(
+        BASE_DIR,
+        "..",
+        "assets",
+        "thumb",
+        "play_icons.png",
+    )
+
     if os.path.isfile(icons_path):
         ic = Image.open(icons_path).resize((ICONS_W, ICONS_H)).convert("RGBA")
+
         r, g, b, a = ic.split()
-        black_ic = Image.merge("RGBA", (r.point(lambda *_: 0), g.point(lambda *_: 0), b.point(lambda *_: 0), a))
+        black_ic = Image.merge(
+            "RGBA",
+            (
+                r.point(lambda *_: 0),
+                g.point(lambda *_: 0),
+                b.point(lambda *_: 0),
+                a,
+            ),
+        )
+
         bg.paste(black_ic, (ICONS_X, ICONS_Y), black_ic)
 
-    # Cleanup and save
+    # Cleanup
     try:
         os.remove(thumb_path)
     except OSError:
