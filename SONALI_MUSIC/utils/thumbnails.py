@@ -3,8 +3,8 @@ import re
 import aiofiles
 import aiohttp
 from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
-from youtubesearchpython.__future__ import VideosSearch
-from config import YOUTUBE_IMG_URL as FAILED
+from py_yt import VideosSearch
+from config import YOUTUBE_IMG_URL
 
 # Constants
 CACHE_DIR = "cache"
@@ -44,7 +44,7 @@ def trim_to_width(text: str, font: ImageFont.FreeTypeFont, max_w: int) -> str:
             return text[:i] + ellipsis
     return ellipsis
 
-async def get_thumb(videoid: str) -> str:
+async def gen_thumb(videoid: str):
     cache_path = os.path.join(CACHE_DIR, f"{videoid}_v4.png")
     if os.path.exists(cache_path):
         return cache_path
@@ -58,11 +58,11 @@ async def get_thumb(videoid: str) -> str:
             raise ValueError("No results found.")
         data = result_items[0]
         title = re.sub(r"\W+", " ", data.get("title", "Unsupported Title")).title()
-        thumbnail = data.get("thumbnails", [{}])[0].get("url", FAILED)
+        thumbnail = data.get("thumbnails", [{}])[0].get("url", YOUTUBE_IMG_URL)
         duration = data.get("duration")
         views = data.get("viewCount", {}).get("short", "Unknown Views")
     except Exception:
-        title, thumbnail, duration, views = "Unsupported Title", FAILED, None, "Unknown Views"
+        title, thumbnail, duration, views = "Unsupported Title", YOUTUBE_IMG_URL, None, "Unknown Views"
 
     is_live = not duration or str(duration).strip().lower() in {"", "live", "live now"}
     duration_text = "Live" if is_live else duration or "Unknown Mins"
@@ -76,7 +76,7 @@ async def get_thumb(videoid: str) -> str:
                     async with aiofiles.open(thumb_path, "wb") as f:
                         await f.write(await resp.read())
     except Exception:
-        return FAILED
+        return YOUTUBE_IMG_URL
 
     # Create base image
     base = Image.open(thumb_path).resize((1280, 720)).convert("RGBA")
@@ -93,8 +93,8 @@ async def get_thumb(videoid: str) -> str:
     # Draw details
     draw = ImageDraw.Draw(bg)
     try:
-        title_font = ImageFont.truetype("SONALI_MUSIC/assets/font.ttf", 32)
-        regular_font = ImageFont.truetype("SONALI_MUSIC/assets/font2.ttf", 18)
+        title_font = ImageFont.truetype("SONALI_MUSIC/assets/font2.ttf", 32)
+        regular_font = ImageFont.truetype("SONALI_MUSIC/assets/font.ttf", 18)
     except OSError:
         title_font = regular_font = ImageFont.load_default()
 
@@ -123,11 +123,6 @@ async def get_thumb(videoid: str) -> str:
         black_ic = Image.merge("RGBA", (r.point(lambda *_: 0), g.point(lambda *_: 0), b.point(lambda *_: 0), a))
         bg.paste(black_ic, (ICONS_X, ICONS_Y), black_ic)
 
-    # Add "KRITI BOTS" top-right (default font)
-    font = ImageFont.truetype("SONALI_MUSIC/assets/font.ttf", 28)  # 
-    text = "BADNAM BOTS"
-    text_size = draw.textsize(text, font=font)
-    draw.text((1280 - text_size[0] - 10, 10), text, fill="yellow", font=font)
     # Cleanup and save
     try:
         os.remove(thumb_path)
@@ -136,5 +131,3 @@ async def get_thumb(videoid: str) -> str:
 
     bg.save(cache_path)
     return cache_path
-
-    
