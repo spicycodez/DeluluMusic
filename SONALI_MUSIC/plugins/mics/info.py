@@ -54,8 +54,8 @@ async def get_userinfo_img(
    
 
 # --------------------------------------------------------------------------------- #
-
-bg_path = "SONALI_MUSIC/assets/userinfospicy.png"
+my_photo = "SONALI_MUSIC/assets/userinfospicy.png"
+bg_path = "SONALI_MUSIC/assets/userinfo.png"
 font_path = "SONALI_MUSIC/assets/hiroko.ttf"
 
 #
@@ -124,7 +124,7 @@ async def userinfo(_, message):
                 user_id=user_id,
                 profile_path=photo,
             )
-            await app.send_photo(chat_id, photo=welcome_photo, caption=INFO_TEXT.format(
+            await app.send_photo(chat_id, photo=my_photo, caption=INFO_TEXT.format(
                 id, username, mention, status, dc_id, bio), reply_to_message_id=message.id, reply_markup=InlineKeyboardMarkup(EVAA),)
         except Exception as e:
             await message.reply_text(str(e))        
@@ -147,8 +147,8 @@ async def userinfo(_, message):
                 user_id=user_id,
                 profile_path=photo,
             )
-            await app.send_photo(chat_id, photo=welcome_photo, caption=INFO_TEXT.format(
-                id, username, mention, status, dc_id, bio), reply_to_message_id=message.id, reply_markup=InlineKeyboardMarkup(EVAA),)
+            await app.send_photo(chat_id, photo=my_photo, caption=INFO_TEXT.format(
+                id, username, mention, status, dc_id, bio), reply_to_message_id=message.id, reply_markup=InlineKeyboardMarkup(EVAA),has_spoiler=True,)
         except Exception as e:
             await message.reply_text(str(e))
 
@@ -172,8 +172,8 @@ async def userinfo(_, message):
                 user_id=user_id,
                 profile_path=photo,
             )
-            await app.send_photo(chat_id, photo=welcome_photo, caption=INFO_TEXT.format(
-                id, username, mention, status, dc_id, bio), reply_to_message_id=message.id, reply_markup=InlineKeyboardMarkup(EVAA),)
+            await app.send_photo(chat_id, photo=my_photo, caption=INFO_TEXT.format(
+                id, username, mention, status, dc_id, bio), reply_to_message_id=message.id, reply_markup=InlineKeyboardMarkup(EVAA),has_spoiler=True,)
         except Exception as e:
             await message.reply_text(str(e))
 
