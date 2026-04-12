@@ -26,17 +26,14 @@ from config import BANNED_USERS
 from strings import get_string
  
 NEXIO = [
-          "https://files.catbox.moe/jf0yqq.jpg",
-          "https://files.catbox.moe/7w0ec2.jpg",
-          "https://files.catbox.moe/dfj1l8.jpg",
-          "https://files.catbox.moe/e7pbwj.jpg",
-          "https://files.catbox.moe/bta4qz.jpg",
-          "https://files.catbox.moe/1a1pu2.jpg",
-          "https://files.catbox.moe/xvirq4.jpg",
-          "https://files.catbox.moe/8dyj3u.jpg",
-          "https://files.catbox.moe/x63yfj.jpg",
-          "https://files.catbox.moe/3rtw9v.jpg",
-          "https://files.catbox.moe/0u6db2.jpg",
+          "https://litter.catbox.moe/vtsad2y91ytmincf.jpg",
+          "https://litter.catbox.moe/4w9ecqcg6gzijzwt.jpg",
+          "https://litter.catbox.moe/ql33xyx1bawu1c2v.jpg",
+          "https://litter.catbox.moe/wvszrn7kqj0lrme6.jpg",
+          "https://litter.catbox.moe/oc71pbepf8cxkk4r.jpg",
+          "https://litter.catbox.moe/00ty0hx8cbrs2299.jpg",
+          "https://litter.catbox.moe/pdn1i4ze2hl1u6gf.jpg",
+          "https://litter.catbox.moe/qcgtbz6keobcc8iz.jpg",
 ]
  
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
