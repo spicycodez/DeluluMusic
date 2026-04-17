@@ -27,7 +27,7 @@ py-tgcalls==0.9.7
 pykeyboard
 pyshorteners
 #pyrogram==2.0.106
-git+https://github.com/KurimuzonAkuma/kurigram.git
+https://github.com/KurimuzonAkuma/kurigram/archive/dev.zip
 python-dotenv
 pyyaml==6.0.1
 requests
