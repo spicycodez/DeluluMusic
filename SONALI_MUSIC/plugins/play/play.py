@@ -407,7 +407,7 @@ async def play_commnd(
                 "⚠️ <b>Security Alert!</b>\n\n"
                 "<b>This request contains a potentially harmful pattern.</b>\n"
                 "Please use normal search terms.\n\n"
-                "Protected From @WTF_WhyMeeh"
+                "Protected From @SexyProfessor"
             )
         query = sanitized_query
 
