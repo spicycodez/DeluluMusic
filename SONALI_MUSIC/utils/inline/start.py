@@ -29,7 +29,7 @@ def private_panel(_):
             InlineKeyboardButton(text=_["S_B_4"], callback_data="MAIN_CP"),
         ],
         [
-            InlineKeyboardButton(text=_["S_B_5"], user_id=config.OWNER_ID, custom_emoji_id="5877565553761062314"),
+            InlineKeyboardButton(text=_["S_B_5"], user_id=config.OWNER_ID,),
             InlineKeyboardButton("⌯ ᴧʙσυт ⌯", callback_data="ALLBOT_CP"),
         ],
         [
