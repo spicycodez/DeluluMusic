@@ -25,8 +25,8 @@ GIT_TOKEN = getenv("GIT_TOKEN", None)
 
 #API_URL = getenv("API_URL", 'https://pytdbotapi.thequickearn.xyz') #youtube song url
 #VIDEO_API_URL = getenv("VIDEO_API_URL", 'https://api.video.thequickearn.xyz')
-YT_API_KEY = getenv("API_KEY", "xbit_QQPV82RWR-TDTqqJLIo6c-OboqShc5Kt") # youtube song api key, generate free key or buy paid plan from panel.thequickearn.xyz
-YTPROXY_URL = getenv("YTPROXY_URL", 'https://tgapi.xbitcode.com')
+YTPROXY_URL = getenv("YTPROXY_URL", 'https://tgapi.xbitcode.com') ## xBit Music Endpoint.
+YT_API_KEY = getenv("YT_API_KEY" , None ) ## Your API key like: xbit_10000000xx0233 Get from  https://t.me/tgmusic_apibot
 
 PRIVACY_LINK = getenv("PRIVACY_LINK", "")
 SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/SpicyxNetwork")
